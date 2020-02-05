@@ -112,12 +112,14 @@ def login():
 @app.route('/logout')
 def logout():
     """Handle logout of user."""
+    do_logout()
 
-    # IMPLEMENT THIS
-
+    flash('You have logged out!')
+    return redirect('/login')
 
 ##############################################################################
 # General user routes:
+
 
 @app.route('/users')
 def list_users():
@@ -174,6 +176,10 @@ def users_followers(user_id):
         return redirect("/")
 
     user = User.query.get_or_404(user_id)
+
+    # import pdb
+    # pdb.set_trace()
+
     return render_template('users/followers.html', user=user)
 
 
@@ -188,7 +194,7 @@ def add_follow(follow_id):
     followed_user = User.query.get_or_404(follow_id)
     g.user.following.append(followed_user)
     db.session.commit()
-
+  
     return redirect(f"/users/{g.user.id}/following")
 
 
