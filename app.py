@@ -5,7 +5,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 
 from forms import UserAddForm, LoginForm, MessageForm, UserEditForm
-from models import db, connect_db, User, Message
+from models import db, connect_db, User, Message, Like
 
 CURR_USER_KEY = "curr_user"
 
@@ -323,18 +323,31 @@ def homepage():
     - anon users: no messages
     - logged in: 100 most recent messages of followed_users
     """
-
     if g.user:
         messages = (Message
                     .query
                     .order_by(Message.timestamp.desc())
                     .limit(100)
                     .all())
-
         return render_template('home.html', messages=messages)
 
     else:
         return render_template('home-anon.html')
+
+
+@app.route("/like/<int:msg_id>", methods=["POST"])
+def like_and_unlike(msg_id):
+    like = Like()
+    like.message_id = int(msg_id)
+    like.user_id = g.user.id
+    db.session.add(like)
+    db.session.commit()
+    # STAR NEEDS TO CHANGE IN THE HOME.HTML TEMPLATE
+    # CONSIDER ADDING THIS MSG_ID TO THE USER.LIKES OBJ
+    # ADD IF STATEMENT SO WE CAN'T LIKE OUR OWN IMAGE
+    # ADD UNLIKING LOGIC
+    # ADD STARS TO ALL THE TEMPLATES WITH MSG LISTS
+    return redirect("/")
 
 
 ##############################################################################

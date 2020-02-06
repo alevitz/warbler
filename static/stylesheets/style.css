@@ -20,6 +20,19 @@ body.error-404 {
   cursor: pointer;
 }
 
+.liked_or_notliked {
+  background: transparent url(/static/images/notliked.png) center 3px no-repeat;
+  width: 36px;
+  height: 36px;
+  border: none;
+  outline: none;
+}
+
+.liked {
+  background-image: url(/static/images/liked.png);
+}
+
+
 /* ======================= Nav */
 
 .navbar {
