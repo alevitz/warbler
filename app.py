@@ -329,7 +329,7 @@ def homepage():
                     .order_by(Message.timestamp.desc())
                     .limit(100)
                     .all())
-        return render_template('home.html', messages=messages)
+        return render_template('home.html', messages=messages, user_like=g.user.like)
 
     else:
         return render_template('home-anon.html')
