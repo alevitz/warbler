@@ -262,6 +262,15 @@ def delete_user():
 
     return redirect("/signup")
 
+@app.route('/likes/<int:user_id>')
+def user_likes(user_id):
+
+    user = User.query.get_or_404(user_id)
+
+    return render_template('likes.html', user=user)
+
+
+
 
 ##############################################################################
 # Messages routes:
