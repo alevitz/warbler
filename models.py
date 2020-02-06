@@ -175,6 +175,7 @@ class Message(db.Model):
 
     user = db.relationship('User')
     like = db.relationship('Like')
+    users_who_liked = db.relationship('User', secondary='likes', backref='liked_messages')
 
 
 class Like(db.Model):

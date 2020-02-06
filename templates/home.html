@@ -1,7 +1,5 @@
 {% extends 'base.html' %}
 {% block content %}
-{{user_like[0].message_id}}
-
   <div class="row">
 
     <aside class="col-md-4 col-lg-3 col-sm-12" id="home-aside">
@@ -54,8 +52,14 @@
                 <span class="text-muted">{{ msg.timestamp.strftime('%d %B %Y') }}</span>
                 <p>{{ msg.text }}</p>
                 {% if msg.user != g.user %}
+                  {% set ns = namespace(liked=false) %}
+                  {% for like in user_like %}
+                    {% if like.message_id == msg.id %}
+                      {% set ns.liked = 'liked' %}
+                    {% endif %}
+                  {% endfor %}
                   <form method="POST" action="/like/{{ msg.id }}" style="z-index:100; cursor: pointer; position: relative;">
-                    <input type="submit" value="" class="liked_or_notliked {{liked_or_notliked}}">
+                    <input type="submit" value="" class="star {{ ns.liked }}">
                   </form>
                 {%endif%}
               </div>

@@ -337,17 +337,30 @@ def homepage():
 
 @app.route("/like/<int:msg_id>", methods=["POST"])
 def like_and_unlike(msg_id):
-    like = Like()
-    like.message_id = int(msg_id)
-    like.user_id = g.user.id
-    db.session.add(like)
-    db.session.commit()
-    # STAR NEEDS TO CHANGE IN THE HOME.HTML TEMPLATE
-    # CONSIDER ADDING THIS MSG_ID TO THE USER.LIKES OBJ
-    # ADD IF STATEMENT SO WE CAN'T LIKE OUR OWN IMAGE
-    # ADD UNLIKING LOGIC
-    # ADD STARS TO ALL THE TEMPLATES WITH MSG LISTS
-    return redirect("/")
+    message = Message.query.get(msg_id)
+    # import pdb; pdb.set_trace()
+    if message.user_id == g.user.id:
+        return redirect(f"/users/{g.user.id}")
+    else:
+        existing_likes = [l.message_id for l in g.user.like]
+        if msg_id in existing_likes:
+            # DELETE existing_like
+            # GET LIKE ID
+            g.user.liked_messages.remove(message)
+            db.session.commit()
+            return redirect("/")
+        else:
+            # CREATE LIKE
+            like = Like()
+            like.message_id = int(msg_id)
+            like.user_id = g.user.id
+            db.session.add(like)
+            db.session.commit()
+
+        # ADD IF STATEMENT SO WE CAN'T LIKE OUR OWN MESSAGE
+        # ADD UNLIKING LOGIC
+        # ADD STARS TO ALL THE TEMPLATES WITH MSG LISTS
+        return redirect("/")
 
 
 ##############################################################################
