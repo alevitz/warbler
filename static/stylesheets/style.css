@@ -165,6 +165,13 @@ nav + .container {
   margin-bottom: 1rem;
 }
 
+.followers .followers.stat a, .following .following.stat a, .messages .messages.stat a, .likes .likes.stat a{
+  color: #657786;
+}
+
+.followers .followers.stat, .following .following.stat, .messages .messages.stat, .likes .likes.stat{
+  border-bottom: 4px solid #007bff;
+}
 /* ===================== User profile */
 
 .join-message {

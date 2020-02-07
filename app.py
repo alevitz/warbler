@@ -183,7 +183,7 @@ def users_followers(user_id):
     return render_template('users/followers.html', user=user)
 
 
-@app.route('/users/follow/<int:follow_id>', methods=['POST'])
+@app.route('/users/follow/<int:follow_id>', methods=['POST', 'GET'])
 def add_follow(follow_id):
     """Add a follow for the currently-logged-in user."""
 
@@ -332,11 +332,10 @@ def homepage():
     - anon users: no messages
     - logged in: 100 most recent messages of followed_users
     """
-    import pdb
-    pdb.set_trace()
     if g.user:
-        messages = (Message
-                    .query
+        following_ids = [f.id for f in g.user.following] + [g.user.id]
+        messages = (Message.query.
+                    filter(Message.user_id.in_(following_ids))
                     .order_by(Message.timestamp.desc())
                     .limit(100)
                     .all())

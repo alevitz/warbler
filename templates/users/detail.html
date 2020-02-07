@@ -9,25 +9,25 @@
     <div class="row justify-content-end">
       <div class="col-9">
         <ul class="user-stats nav nav-pills">
-          <li class="stat">
+          <li class="stat messages">
             <p class="small">Messages</p>
             <h4>
               <a href="/users/{{ user.id }}">{{ user.messages | length }}</a>
             </h4>
           </li>
-          <li class="stat">
+          <li class="stat following">
             <p class="small">Following</p>
             <h4>
               <a href="/users/{{ user.id }}/following">{{ user.following | length }}</a>
             </h4>
           </li>
-          <li class="stat">
+          <li class="stat followers" id="followers">
             <p class="small">Followers</p>
             <h4>
               <a href="/users/{{ user.id }}/followers">{{ user.followers | length }}</a>
             </h4>
           </li>
-          <li class="stat">
+          <li class="stat likes">
             <p class="small">Likes</p>
             <h4>
               <a href="/likes/{{ user.id }}">{{user.like|length}}</a></h4>
