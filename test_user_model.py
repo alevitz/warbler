@@ -5,6 +5,7 @@
 #    python -m unittest test_user_model.py
 
 
+from app import app
 import os
 from unittest import TestCase
 
@@ -19,13 +20,12 @@ os.environ['DATABASE_URL'] = "postgresql:///warbler-test"
 
 
 # Now we can import app
-
-from app import app
+app.config['TESTING'] = True
 
 # Create our tables (we do this here, so we only create the tables
 # once for all tests --- in each test, we'll delete the data
 # and create fresh new clean test data
-
+db.drop_all()
 db.create_all()
 
 
@@ -39,12 +39,11 @@ class UserModelTestCase(TestCase):
         Message.query.delete()
         Follows.query.delete()
 
-        self.client = app.test_client()
-
     def test_user_model(self):
         """Does basic model work?"""
 
         u = User(
+            # id=1,
             email="test@test.com",
             username="testuser",
             password="HASHED_PASSWORD"
@@ -52,7 +51,50 @@ class UserModelTestCase(TestCase):
 
         db.session.add(u)
         db.session.commit()
-
+        print('--------------user', u)
         # User should have no messages & no followers
         self.assertEqual(len(u.messages), 0)
         self.assertEqual(len(u.followers), 0)
+
+    def test_repr(self):
+        """Does repr work?"""
+
+        u = User(
+            # id=1,
+            email="test@test.com",
+            username="testuser",
+            password="HASHED_PASSWORD"
+        )
+
+        db.session.add(u)
+        db.session.commit()
+        print('**********user', u)
+        self.assertEqual(
+            u.__repr__(), f"<User #{u.id}: {u.username}, {u.email}>")
+
+    def test_is_following(self):
+        """Does is_following work?"""
+
+        u1 = User(
+            email="one@test.com",
+            username="testuserone",
+            password="HASHED_PASSWORD"
+        )
+
+        u2 = User(
+            email="two@test2.com",
+            username="testuser2",
+            password="HASHED_PASSWORD"
+        )
+        
+        db.session.add(u1, u2)
+        db.session.commit()
+
+        u1.following.append(u2)
+        db.session.add(u1)
+        db.session.commit()
+
+        print('@@@@@@@@@@@@@@@@', u1.following[0])
+
+        self.assertEqual(u1.is_following(u2), True) 
+

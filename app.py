@@ -194,7 +194,7 @@ def add_follow(follow_id):
     followed_user = User.query.get_or_404(follow_id)
     g.user.following.append(followed_user)
     db.session.commit()
-  
+
     return redirect(f"/users/{g.user.id}/following")
 
 
@@ -228,14 +228,15 @@ def profile():
                                      form.password.data)
 
             if user:
-                flash(f"Hello, {user.username}!", "you have updated your profile!")
+                flash(f"Hello, {user.username}!",
+                      "you have updated your profile!")
                 user.username = form.username.data,
                 user.email = form.email.data,
                 user.image_url = form.image_url.data
                 user.header_image_url = form.header_image_url.data
                 user.location = form.location.data
                 user.bio = form.bio.data
-                
+
                 db.session.commit()
 
                 return redirect(f"/users/{user.id}")
@@ -245,7 +246,7 @@ def profile():
                 return redirect("/")
 
         return render_template('users/edit.html', form=form)
-    
+
 
 @app.route('/users/delete', methods=["POST"])
 def delete_user():
@@ -262,14 +263,13 @@ def delete_user():
 
     return redirect("/signup")
 
+
 @app.route('/likes/<int:user_id>')
 def user_likes(user_id):
 
     user = User.query.get_or_404(user_id)
 
     return render_template('likes.html', user=user)
-
-
 
 
 ##############################################################################
@@ -332,6 +332,8 @@ def homepage():
     - anon users: no messages
     - logged in: 100 most recent messages of followed_users
     """
+    import pdb
+    pdb.set_trace()
     if g.user:
         messages = (Message
                     .query
@@ -350,26 +352,24 @@ def like_and_unlike(msg_id):
     # import pdb; pdb.set_trace()
     if message.user_id == g.user.id:
         return redirect(f"/users/{g.user.id}")
-    else:
-        existing_likes = [l.message_id for l in g.user.like]
-        if msg_id in existing_likes:
-            # DELETE existing_like
-            # GET LIKE ID
-            g.user.liked_messages.remove(message)
-            db.session.commit()
-            return redirect("/")
-        else:
-            # CREATE LIKE
-            like = Like()
-            like.message_id = int(msg_id)
-            like.user_id = g.user.id
-            db.session.add(like)
-            db.session.commit()
 
-        # ADD IF STATEMENT SO WE CAN'T LIKE OUR OWN MESSAGE
-        # ADD UNLIKING LOGIC
-        # ADD STARS TO ALL THE TEMPLATES WITH MSG LISTS
-        return redirect("/")
+    existing_likes = [l.message_id for l in g.user.like]
+    if msg_id in existing_likes:
+        # DELETE existing_like
+        # GET LIKE ID
+        g.user.liked_messages.remove(message)
+        db.session.commit()
+
+    else:
+        # CREATE LIKE
+        like = Like(message_id=int(msg_id), user_id=g.user.id)
+        db.session.add(like)
+        db.session.commit()
+
+    # ADD IF STATEMENT SO WE CAN'T LIKE OUR OWN MESSAGE
+    # ADD UNLIKING LOGIC
+    # ADD STARS TO ALL THE TEMPLATES WITH MSG LISTS
+    return redirect("/")
 
 
 ##############################################################################
